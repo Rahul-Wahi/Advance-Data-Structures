@@ -58,7 +58,8 @@ public class IntervalHeap<T> {
 				Node newnNode = new Node() ;
 				newnNode.left = element ;
 				ihArray.add(newnNode) ;
-				minBottomUpHeapify(size) ;
+				minBottomUpHeapify(size) ; // if smaller this will run
+				maxBottomUpHeapify(size - 1) ;// if larger this will run
 				size++;
 			}
 		}
@@ -178,7 +179,7 @@ public class IntervalHeap<T> {
 		
 		//If last node has no right feild than delete the node , else replace the left with right node value
 		// and set right to null
-		if( ihArray.get(0).right == null )
+		if( ihArray.get(size-1).right == null )
 		{
 			size-- ;
 			ihArray.remove(size) ; // remove the last node
@@ -195,6 +196,89 @@ public class IntervalHeap<T> {
 		
 	}
 	
+	public T removeMax()
+	{
+		T max ;
+		if(size == 0)
+		{
+			System.out.println("Invalid Opearatiion, Heap is empty") ;
+			return null;
+		}
+		
+		if( size ==  1 )
+		{
+			if( ihArray.get(0).right == null)
+			{
+				max = (T) ihArray.get(0).left ;
+				ihArray.remove(0) ;
+				size--;
+			}
+			else
+			{
+				max = (T) ihArray.get(0).right ;
+				ihArray.get(0).right = null ;
+			}
+			
+			return max ;
+		}
+		
+		max = (T) ihArray.get(0).right ; 
+		
+		//Replace with last node left point
+		ihArray.get(0).left = ihArray.get(size-1).left ;
+		
+		//If last node has no right feild than delete the node , else replace the left with right node value
+		// and set right to null
+		if( ihArray.get(size-1).right == null )
+		{
+			
+			size-- ;
+			ihArray.get(0).right = ihArray.get(size).left ;
+			ihArray.remove(size) ; // remove the last node
+		}
+		else
+		{
+			ihArray.get(size-1).left = ihArray.get(size-1).right ;
+			ihArray.get(0).right = ihArray.get(size-1).right ;
+			ihArray.get(size-1).right = null ;
+		}
+		
+		//Call top Down min heapification
+		maxTopdownHeapify(0) ;		
+				
+		return min ;
+		
+	}
+	
+	
+	/***********************
+	Function Name: getMin
+	Argument: None
+	Description: This function will return the minimum value, the root of heap
+	Return: type T
+	 ***********************/
+	public T getMin()
+	{
+		if(size == 0)
+			return null ;
+		return (T) ihArray.get(0).left ;
+	}
+	
+	/***********************
+	Function Name: getMin
+	Argument: None
+	Description: This function will return the minimum value, the root of heap
+	Return: type T
+	 ***********************/
+	public T getMax()
+	{
+		if(size == 0)
+			return null ;
+		if(ihArray.get(0).right == null )
+			return (T) ihArray.get(0).left ;
+		
+		return (T) ihArray.get(0).right ;
+	}
 	
 	/***********************
 	Function Name: parent
