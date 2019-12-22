@@ -43,7 +43,8 @@ public class LeftistTree<T> {
 		
 		Node<T> left = root.left ;
 		Node<T> right = root.right ;
-		this.root = meld( left , right ) ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               meld(left , right) ;
+		this.root = meld( left , right ) ; 
+		this.root.parent = null ;
 	}
 	
 	/***********************
@@ -86,25 +87,13 @@ public class LeftistTree<T> {
 			return node2 ;
 		}
 		
-		if( node1.right == null )
-		{
-			node1.right = node2 ;
-			if( node1.right != null)
-			{
-				node1.right.parent = node2 ;
-			}
-			node2.parent = node1 ;
-			node = node1 ;
-			//node.s =  1 + node1.s ; 
-		}
-		else
-		{
+		
 			node1.right = meld( node1.right , node2 ) ;
 			if( node1.right != null)
 			{
 				node1.right.parent = node1 ;
 			}
-		}
+		
 		
 		if( getS(node1.left) < getS( node1.right ) ) 
 		{
@@ -150,7 +139,7 @@ public class LeftistTree<T> {
 			parent.right = nodeToDelete.left ;
 		}
 		
-		if(nodeToDelete.left.parent != null )
+		if(nodeToDelete.left != null )
 		{
 			nodeToDelete.left.parent = parent ;
 		}
@@ -160,19 +149,19 @@ public class LeftistTree<T> {
 		 
 	}
 	
-	public void adjustS(Node<T> node)
+	private void adjustS(Node<T> node)
 	{
 		if( node == null || node == root )
 			return ;
 		
-		if( node.left.s < node.right.s ) 
+		if( getS( node.left ) < getS( node.right ) ) 
 		{
 			swap(node);
 			adjustS(node.parent) ;
 		}
 	}
 	
-	public Node<T> search(Node<T> node , T element)
+	private Node<T> search(Node<T> node , T element)
 	{
 		if( node == null )
 			return null ;
@@ -204,10 +193,10 @@ public class LeftistTree<T> {
 		Node<T> tmp = node.left ;
 		node.left = node.right ;
 		node.right = tmp ;
-		node.s = 1 + node.right.s ;
+		node.s = 1 + getS( node.right ) ;
 	}
 	
-	public int getS( Node node )
+	private int getS( Node node )
 	{
 		if( node == null )
 			return 0 ;
@@ -215,6 +204,22 @@ public class LeftistTree<T> {
 		return node.s ;
 	}
 	
+	public void print()
+	{
+		print(this.root) ;
+		System.out.println();
+	}
+	
+	private void print(Node<T> node)
+	{
+		if( node == null )
+			return ;
+		
+		System.out.print(node);
+		print(node.left) ;
+		print(node.right);
+		
+	}
 	class Node<T>
 	{
 		T element ;
@@ -225,6 +230,15 @@ public class LeftistTree<T> {
 		{
 			this.element = element ;
 			s = 1;
+		}
+		
+		@Override
+		public String toString()
+		{
+			if(parent == null) {
+		        return "(Value:" + element + ", S:" + s + ")";
+		    }
+		    return "(Value:" + element + ", S:" + s + ", Parent:"+ parent.element + ")";
 		}
 		
 		
